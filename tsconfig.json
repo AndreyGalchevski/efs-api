@@ -1,0 +1,43 @@
+/*
+  Based on https://github.com/tsconfig/bases/blob/main/bases/node16.json
+*/
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "lib": ["es2021"],
+    "target": "es2021",
+    "module": "commonjs",
+    "outDir": "dist",
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    
+    "pretty": true,
+    "sourceMap": true,
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules/*"]
+}

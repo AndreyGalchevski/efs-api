@@ -1,0 +1,34 @@
+import http from 'http';
+
+import app from './app';
+
+const port = Number(process.env.PORT || '8080');
+
+app.set('port', port);
+
+const server = http.createServer(app);
+
+const onError = (error: NodeJS.ErrnoException): never => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  if (error.code === 'EACCES') {
+    console.error(`Port ${port} requires elevated privileges`);
+    process.exit(1);
+  } else if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use`);
+    process.exit(1);
+  } else {
+    throw error;
+  }
+};
+
+const onListening = (): void => {
+  console.log(`Server live on port ${port}`);
+};
+
+server.listen(port);
+
+server.on('error', onError);
+server.on('listening', onListening);
