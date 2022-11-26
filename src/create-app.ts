@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Application } from 'express';
 import dotenv from 'dotenv';
 
 import dbManager from './db/db-manager';
@@ -6,19 +6,21 @@ import modules from './modules';
 import errorMiddleware from './middleware/error-middleware';
 import securityMiddleware from './middleware/security-middleware';
 
-const app = express();
+const createApp = async (dbURI: string): Promise<Application> => {
+  dotenv.config();
 
-dotenv.config();
-
-(async (): Promise<void> => {
-  await dbManager.init().catch((e) => {
+  await dbManager.init(dbURI).catch((e) => {
     console.error(`DB connection failed: ${e.message}, stack: ${e.stack}`);
     process.exit(1);
   });
 
+  const app = express();
+
   securityMiddleware.init(app);
   modules.init(app);
   errorMiddleware.init(app);
-})();
 
-export default app;
+  return app;
+};
+
+export default createApp;

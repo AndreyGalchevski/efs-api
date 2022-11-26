@@ -2,6 +2,7 @@ import { Collection, Db, Document, MongoClient } from 'mongodb';
 
 import { AppCollection, appCollections } from '../types';
 
+let dbClient: MongoClient;
 let dbInstance: Db;
 
 const dbManager = {
@@ -11,20 +12,27 @@ const dbManager = {
       .createIndex({ expirationDate: 1 }, { expireAfterSeconds: 0 });
   },
 
-  init: async (): Promise<void> => {
+  init: async (dbURI: string): Promise<void> => {
     if (dbInstance) {
       console.warn('DB already initialized. Call getInstance()');
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const client = await new MongoClient(process.env.DB_URI!).connect();
+    dbClient = await new MongoClient(dbURI).connect();
 
     console.log('Connected to DB');
 
-    dbInstance = client.db();
+    dbInstance = dbClient.db();
 
     await dbManager.setupIndexes(dbInstance);
+  },
+
+  disconnect: async (): Promise<void> => {
+    if (!dbClient) {
+      throw new Error('DB not initialized. Call init() first');
+    }
+
+    await dbClient.close();
   },
 
   getInstance: (): Db => {
