@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import joi from 'joi';
 
 import { RequestSchema } from '../../types';
@@ -39,7 +40,7 @@ const filesController = {
     const ttl = headers['x-ttl'] ? Number(headers['x-ttl']) : undefined;
     const fileURL = await filesService.createFile(file, ttl);
 
-    res.json({ data: { fileURL } });
+    res.status(StatusCodes.CREATED).json({ data: { fileURL } });
   },
 
   handleGetFile: async (
