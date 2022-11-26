@@ -1,4 +1,4 @@
-# efs-api
+# Ephemeral File Sharing API
 
 The service allows the web app to upload images, which the server saves inside a new MongoDB document and provides an endpoint for serving the uploaded images (aka shareable URLs)
 
