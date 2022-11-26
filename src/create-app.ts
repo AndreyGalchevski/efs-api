@@ -6,9 +6,9 @@ import modules from './modules';
 import errorMiddleware from './middleware/error-middleware';
 import securityMiddleware from './middleware/security-middleware';
 
-const createApp = async (dbURI: string): Promise<Application> => {
-  dotenv.config();
+dotenv.config();
 
+const createApp = async (dbURI: string): Promise<Application> => {
   await dbManager.init(dbURI).catch((e) => {
     console.error(`DB connection failed: ${e.message}, stack: ${e.stack}`);
     process.exit(1);

@@ -17,7 +17,11 @@ describe('files API tests', () => {
 
     app = await createApp(testDB.dbURI);
     closeConnection = testDB.closeConnection;
-  });
+
+    await dbManager.getInstance().admin().command({ setParameter: 1, ttlMonitorSleepSecs: 5 });
+    // wait for the TTL thread to finish the default 60 seconds cycle before running the tests
+    await sleep(60000);
+  }, 61000);
 
   afterAll(async () => {
     await dbManager.disconnect();
@@ -40,29 +44,31 @@ describe('files API tests', () => {
       expect(response.body.data.fileURL.length).toBeGreaterThan(0);
     });
 
-    it('should automatically delete the uploaded file after 60 seconds (default)', async () => {
+    it('should automatically delete the uploaded file with 60 second duration (default)', async () => {
       const response = await request(app).put('/v1/file').attach(UPLOAD_FIELD_NAME, testFilePath);
 
-      await sleep(61000);
+      // wait for the file duration + the TTL thread 5-second cycle
+      await sleep(65000);
 
       const fileID = response.body.data.fileURL.split('/').pop();
       const file = await filesDAL.retrieve(fileID);
 
       expect(file).toEqual(null);
-    }, 62000);
+    }, 66000);
 
-    it('should automatically delete the uploaded file after 2 seconds', async () => {
+    it('should automatically delete the uploaded file with 1 second duration', async () => {
       const response = await request(app)
         .put('/v1/file')
-        .set('x-ttl', '2')
+        .set('x-ttl', '1')
         .attach(UPLOAD_FIELD_NAME, testFilePath);
 
-      await sleep(3000);
+      // wait for the TTL thread 5-second cycle
+      await sleep(5000);
 
       const fileID = response.body.data.fileURL.split('/').pop();
       const file = await filesDAL.retrieve(fileID);
 
       expect(file).toEqual(null);
-    }, 4000);
+    }, 6000);
   });
 });
