@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import dbManager from './db/db-manager';
 import modules from './modules';
 import errorMiddleware from './middleware/error-middleware';
+import securityMiddleware from './middleware/security-middleware';
 
 const app = express();
 
@@ -15,6 +16,7 @@ dotenv.config();
     process.exit(1);
   });
 
+  securityMiddleware.init(app);
   modules.init(app);
   errorMiddleware.init(app);
 })();
